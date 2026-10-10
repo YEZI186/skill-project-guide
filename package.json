@@ -1,0 +1,36 @@
+{
+  "name": "@yezi186/project-guide",
+  "version": "0.1.0",
+  "description": "Agent skill：软著操作说明书撰写（五步法 + 11 种叙述手法 + 五型形态定型 + 21 条成文自查）",
+  "keywords": [
+    "agent-skill",
+    "claude-skill",
+    "skills",
+    "dsh",
+    "software-copyright",
+    "documentation",
+    "technical-writing"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "SKILL.md",
+    "reference.md",
+    "examples.md",
+    "README.md",
+    "LICENSE",
+    "scripts/install.mjs",
+    "scripts/verify-pack.mjs"
+  ],
+  "bin": {
+    "project-guide-install": "scripts/install.mjs"
+  },
+  "scripts": {
+    "postinstall": "node scripts/install.mjs --auto --quiet",
+    "verify": "node scripts/verify-pack.mjs",
+    "prepublishOnly": "npm run verify"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
