@@ -24,9 +24,12 @@ npx skills add YEZI186/skill-project-guide -a opencode -a pi -g -y
 
 | Agent | 生效路径 | 说明 |
 |---|---|---|
-| opencode | `~/.agents/skills/project-guide/` | opencode 官方支持的通用 skills 目录（项目级为 `<项目>/.agents/skills/`） |
-| pi | `~/.agents/skills/project-guide/` | pi 的全局 skills 目录 |
+| OpenCode | `~/.agents/skills/project-guide/` | opencode 官方支持的通用 skills 目录（项目级为 `<项目>/.agents/skills/`） |
+| Trae CN | `~/.agents/skills/project-guide/` | 已装 `skills` CLI 生态的 Trae 版本可直接识别（自有目录为 `~/.trae-cn/skills/`） |
+| Cline / GitHub Copilot / Zed | `~/.agents/skills/project-guide/` | 同读通用 skills 目录 |
 | DeepSeek Harness | `~/.agents/skills/project-guide/` | DSH 的 `agents` skill 来源，默认启用（见 `<DSH_HOME>/skills-manager/state.json`）；DSH 另支持自有目录 `<DSH_HOME>/skills/` |
+
+> 2026-10-12 本机实测：执行上面这条命令后，`npx skills ls -g` 显示该 skill 对 **Cline、GitHub Copilot、OpenCode、Trae CN、Zed** 五个 agent 生效（同一路径 `~/.agents/skills/project-guide/`，共 10 个文件，无 `history/`）。
 
 > 安装目录名取自 `SKILL.md` 的 `name` 字段（`project-guide`），与仓库名 `skill-project-guide` 不同属正常。
 
@@ -99,7 +102,7 @@ skill 被触发后会按五步法推进，并在关键节点（G1 素材闸 / G2
 
 - **可移植核心**：`SKILL.md` 只用 `name` + `description` + 纯 Markdown，跨 agent 通用；
 - **DSH 扩展字段**：`whenToUse`、`user-invocable` 为 DeepSeek Harness 专属扩展，其他 agent 会忽略，不影响加载；
-- **Trae**：当前不支持 SKILL.md 格式（只认自有的 `npx skills` 生态与 `.trae/skills/` 格式），本 skill 在 Trae 中暂不可用，参见 [TRAE#2253](https://github.com/Trae-AI/TRAE/issues/2253)；
+- **Trae**：已装 `skills` CLI 生态的 Trae（如 Trae CN）可直接识别本 skill——实测装入 `~/.agents/skills/` 后 Trae CN 即生效（Trae 自有目录为 `~/.trae-cn/skills/`）；
 - **台账文件**：`history/` 为运行期本地状态，不随仓库分发，也不会被更新覆盖。
 
 ## 其他分发方式
