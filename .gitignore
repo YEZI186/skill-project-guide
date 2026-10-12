@@ -1,0 +1,11 @@
+# npm / 打包产物
+node_modules/
+*.tgz
+
+# 运行时本地状态（每次使用 skill 会生成，绝不上传）
+history/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+desktop.ini

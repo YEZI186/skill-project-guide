@@ -13,6 +13,14 @@
   ],
   "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YEZI186/skill-project-guide.git"
+  },
+  "homepage": "https://github.com/YEZI186/skill-project-guide#readme",
+  "bugs": {
+    "url": "https://github.com/YEZI186/skill-project-guide/issues"
+  },
   "files": [
     "SKILL.md",
     "reference.md",
