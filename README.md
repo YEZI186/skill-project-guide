@@ -94,8 +94,10 @@ skill 被触发后会按五步法推进，并在关键节点（G1 素材闸 / G2
 | `reference.md` | 写作细则与范例：功能描述写法、11 手法实例与误用信号、动态文案转写四法、五型形态适配卡、弹窗三变体等 |
 | `examples.md` | 完整案例与正反范式（形态定型参照、首分组标题错配的正反例） |
 | `LICENSE` | MIT 许可 |
+| `scripts/guide-check.mjs` | **机械项核查**：规范 12+1 项一次输出并逐项判定（每完成一个模块即跑，第五步终检再跑一次；退出码可直接接闸口） |
+| `scripts/cover-matrix.mjs` | **覆盖矩阵生成**：素材表 → 逐条落点与覆盖率（配置化列映射，服务 G1 素材闸与第五步反向核对） |
+| `scripts/normalize-quotes.mjs` | **引号归一**：ASCII 双引号行内交替转弯引号、`⟦⟧` 转并列弯引号，输出三项计数（运行前自动备份 `.bak`，仅排版管线挂载） |
 | `scripts/install.mjs` | 可选：多 agent 投放脚本（`--auto` / `--target` / `--project` / `--uninstall`） |
-| `scripts/verify-pack.mjs` | 发布前校验：白名单文件存在性、敏感词扫描、frontmatter 跨平台约束 |
 | `history/user-guide-rotation.md` | **运行时生成**：跨会话的写法轮换台账（首次使用后自动创建于本 skill 目录下的 `history/`，用于避免不同软件写出雷同风格；该目录已在 `.gitignore` 排除） |
 
 ## 兼容性说明
