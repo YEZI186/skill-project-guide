@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 /**
- * guide-check.mjs —— 说明书规范机械项 12+1 项检查（project-guide 第五步前置闸）
+ * guide-check.mjs —— 说明书规范检查：13 项断言 + 2 项信息输出（project-guide 第五步前置闸）
+ * 修订（2026-10-16 漏洞修复）：C7 兼容文本行分组；新增 C14 同型连排计数（供自查 19a）、C15 四章引用文案密度（供粒度 14）——两项均为信息输出，不影响退出码。
  *
  * 用法：node guide-check.mjs <说明书.md> [--module 4.3] [--json]
  * 退出码：0 = 全部断言通过；1 = 任一断言失败；2 = 输入/参数错误。
  * 阈值（2026-10-13 用户裁定钉死）：总中文字符 ≥12000；3.4 主要功能 ∈ [500,1000]。
+ * 修订（2026-10-16 用户裁定）：C5 不达标时输出 G3 豁免提示（模块数 ≤6 的工具型/大屏型可经人工确认降为 ≥9000），断言默认行为不变。
  * 工程约定：遵循 SKILL.md 第七章（计数三向断言、退出码三分）。
  */
 import fs from 'node:fs'
@@ -63,15 +65,18 @@ add('C4', '主要功能字数 ∈ [500,1000]', mc >= 500 && mc <= 1000, `实测=
 
 // C5 总字数 ≥12000
 const total = cn(raw)
-add('C5', '总中文字符 ≥12000', total >= 12000, `实测=${total}`, true)
+const c5pass = total >= 12000
+add('C5', '总中文字符 ≥12000', c5pass, c5pass ? `实测=${total}` : `实测=${total}（模块数 ≤6 的工具型 / 大屏型软件经 G3 人工确认可降为 ≥9000，走 G3 豁免需人工确认）`, true)
 
 // C6 表格
 const tables = cnt(raw, /^\| *:?-{3,}/gm)
 add('C6', '表格计数', tables >= 1, `表头分隔行=${tables}`, false)
 
-// C7 操作分组
-const groups = cnt(raw, /^##### /gm)
-add('C7', '操作分组计数', groups > 0, `五级分组数=${groups}`, false)
+// C7 操作分组（双形态：五级标题分组 / 文本行「（n）」分组，兼容两种成稿形态）
+const groupsH5 = cnt(raw, /^#####\s/gm)
+const groupsText = cnt(raw, /^\*{0,2}[（(]\d+[)）]/gm)
+const groups = groupsH5 + groupsText
+add('C7', '操作分组计数', groups > 0, `分组数=${groups}（五级标题=${groupsH5} 文本分组=${groupsText}）`, false)
 
 // C8 引号（双模式：默认工作态四项 / --legacy 排版态三项）
 if (legacy) {
@@ -148,6 +153,31 @@ if (behaviorFile) {
 } else {
   add('C13', '行为口径证据完备性', true, '跳过（未提供 --behavior 清单）', false)
 }
+
+// C14 分组小标题同型连排计数（信息输出，不断言；供自查 19a 人工复核）
+const grpTitles = (raw.match(/^(?:#####\s|\*{2})?[（(]\d+[)）][^\n]{2,40}/gm) || []).map((s) => s.replace(/^#####\s*/, '').replace(/\*{2}/g, '').replace(/^[（(]\d+[)）]\s*/, '').trim())
+const headOf = (t) => {
+  const m = t.match(/^(查看|查询|维护|新增|编辑|删除|导入|导出|审核|生成|配置|设置|管理|搜索|筛选|切换|处理|提交|打印|下载|上传|登记|确认|取消)/)
+  return m ? m[1] : t.slice(0, 2)
+}
+let maxRun = 0, curRun = 0, curHead = ''
+for (const t of grpTitles) {
+  const h = headOf(t)
+  curRun = h === curHead ? curRun + 1 : 1
+  curHead = h
+  if (curRun > maxRun) maxRun = curRun
+}
+add('C14', '分组小标题同型连排（供 19a 复核）', true,
+  `分组标题=${grpTitles.length} 最大同型连排=${maxRun}（连续 3 个同型即返工，人工判定）`, false)
+
+// C15 四章引用文案密度（信息输出，不断言；供粒度 14 / 自查 21 双闸复核）
+const ch4Seg = (raw.match(/## 四、操作说明[\s\S]*$/) || [''])[0]
+const ch4cn = cn(ch4Seg)
+const quoteMarks = cnt(ch4Seg, /\u0022/g) + cnt(ch4Seg, /[\u201C\u201D]/g) + cnt(ch4Seg, /[\u27E6\u27E7]/g)
+const quotePairs = Math.floor(quoteMarks / 2)
+const density = ch4cn > 0 ? +(quotePairs / (ch4cn / 1000)).toFixed(1) : 0
+add('C15', '四章引用文案密度（供粒度 14 复核）', true,
+  `四章文案条数=${quotePairs} 四章中文字=${ch4cn} 密度=${density} 条/千字（阈值：全篇 ≤18，写透模块单模块 ≤25）`, false)
 
 const assertionFail = results.filter((r) => r['断言'] && !r.pass)
 const exitCode = assertionFail.length ? 1 : 0
